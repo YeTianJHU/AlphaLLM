@@ -70,7 +70,6 @@ Additional configuration options:
 Example usage:
 
 ```bash
-# Run MCTS search on GSM8K dataset
 ./scripts/run_mcts.sh \
   --dataset gsm8k \
   --search_time 40 \
@@ -79,14 +78,6 @@ Example usage:
   --n_total_children 3 \
   --value_weight 1.0 \
   --use_calculator true
-
-# Run on MATH dataset with different parameters
-./scripts/run_mcts.sh \
-  --dataset math \
-  --math_subset 1000 \
-  --search_time 60 \
-  --min_terminals 60 \
-  --use_math_extractor true
 ```
 
 ### Monitoring and Output
@@ -101,14 +92,3 @@ output/mcts_${EXP_NAME}/
 ```
 
 For more details on implementation and configuration options, refer to the source code documentation.
-
-## Paper
-
-[Toward Self-Improvement of LLMs via Imagination, Searching, and Criticizing](https://arxiv.org/pdf/2404.12253)
-```
-@inproceedings{tian2024toward,
-  title={Toward Self-Improvement of LLMs via Imagination, Searching, and Criticizing},
-  author={Tian, Ye and Peng, Baolin and Song, Linfeng and Jin, Lifeng and Yu, Dian and Han, Lei and Mi, Haitao and Yu, Dong},
-  booktitle={NeurIPS},
-  year={2024}
-}
