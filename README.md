@@ -1,6 +1,11 @@
 # AlphaLLM
 
-AlphaLLM is a Monte Carlo Tree Search (MCTS) implementation for mathematical problem-solving using large language models. It uses multiple components including policy models, value models, outcome reward models (ORM), and step reward models (SRM) to guide the search process.
+AlphaLLM combines Monte Carlo Tree Search (MCTS) with Large Language Models (LLMs) to establish a self-improving loop for complex reasoning and planning tasks. Inspired by AlphaGo, this framework addresses challenges in combining MCTS with LLMs through:
+
+- **Policy Models**: Guide solution path exploration
+- **Value Models**: Evaluate solution quality
+- **Outcome Reward Models (ORM)**: Assess final solutions
+- **Process Reward Models (PRM)**: Provide intermediate feedback
 
 ## Setup
 
@@ -32,13 +37,13 @@ AlphaLLM is a Monte Carlo Tree Search (MCTS) implementation for mathematical pro
      >& vllm_log_orm &
    ```
 
-4. **Step Reward Model (SRM) Service**
+4. **Process Reward Model (PRM) Service**
    ```bash
-   # Start using the step reward server script with SRM configuration
+   # Start using the step reward server script with PRM configuration
    python3 server/step_server_70b.py \
      --host 0.0.0.0 \
-     --port $SRM_PORT \
-     --model $SRM_MODEL_PATH \
+     --port $PRM_PORT \
+     --model $PRM_MODEL_PATH \
      --tensor-parallel-size $tp \
      >& vllm_log_step &
    ```
@@ -61,7 +66,7 @@ Additional configuration options:
 - `VALUE_WEIGHT`: Weight of value network in total reward (0-1)
 - `N_SIMULATIONS`: Number of simulations with simulation policy model
 - `FASTROLLOUT_WEIGHT`: Weight of fast rollout reward (0-1)
-- `STEP_REWARD_WEIGHT`: Weight of step reward in total reward (0-1)
+- `PROCESS_REWARD_WEIGHT`: Weight of process reward in total reward (0-1)
 - `USE_CALCULATOR`: Enable calculator for evaluating mathematical expressions
 - `USE_MATH_EXTRACTOR`: Enable math expression extraction
 - `EXEC_CODE`: Enable code execution for verification
