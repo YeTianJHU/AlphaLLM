@@ -1,11 +1,6 @@
 # AlphaLLM
 
-AlphaLLM combines Monte Carlo Tree Search (MCTS) with Large Language Models (LLMs) to establish a self-improving loop for complex reasoning and planning tasks. Inspired by AlphaGo, this framework addresses challenges in combining MCTS with LLMs through:
-
-- **Policy Models**: Guide solution path exploration
-- **Value Models**: Evaluate solution quality
-- **Outcome Reward Models (ORM)**: Assess final solutions
-- **Process Reward Models (PRM)**: Provide intermediate feedback
+AlphaLLM combines Monte Carlo Tree Search (MCTS) with Large Language Models (LLMs) to establish a self-improving loop for complex reasoning and planning tasks.
 
 ## Setup
 
