@@ -7,7 +7,7 @@ AlphaLLM combines Monte Carlo Tree Search (MCTS) with Large Language Models (LLM
 ### Starting Services
 
 1. **Policy Service**
-   - Uses Llama models (Llama-2-70B, Llama-3-8B, etc.)
+   - Uses Llama models (Llama-2-70B)
    - Start multiple policy servers for parallel processing
    ```bash
    # Example policy server startup
@@ -70,25 +70,5 @@ Additional configuration options:
 Example usage:
 
 ```bash
-./scripts/run_mcts.sh \
-  --dataset gsm8k \
-  --search_time 40 \
-  --min_terminals 40 \
-  --init_children 40 \
-  --n_total_children 3 \
-  --value_weight 1.0 \
-  --use_calculator true
+./scripts/run_mcts.sh 
 ```
-
-### Monitoring and Output
-
-The search process generates detailed logs and saves results in the specified output directory:
-
-```
-output/mcts_${EXP_NAME}/
-├── tree_data/           # Saved search trees
-├── results.json         # Search results and metrics
-└── logs/               # Detailed execution logs
-```
-
-For more details on implementation and configuration options, refer to the source code documentation.

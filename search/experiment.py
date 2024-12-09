@@ -163,8 +163,6 @@ class SearchExperiment():
                 break
             if self.search_continue and self.results[i]['update']:
                 continue
-            if self.args.filter_prev_iter and self.results_prev_iter[i]['is_correct']:
-                continue
             
             prompt = self.data[i][self.prompt_name]
             label = self.data[i][self.gt_answer_name]
@@ -286,11 +284,6 @@ class SearchExperiment():
         with open(filename, 'wb') as f:
             pickle.dump(self.results, f)
 
-        if self.args.filter_prev_iter:
-            filename = self.args.prev_iter_file
-            with open(filename, 'wb') as f:
-                pickle.dump(self.results_prev_iter, f)
-
     def load_results(self):
         experiment_name = gen_experiment_name(self.config, self.args.suffix)
         filename = f"{self.config['output_dir']}/exp_{experiment_name}.p"
@@ -317,20 +310,6 @@ class SearchExperiment():
             self.print_result(last_updated_index)
         except Exception as e:
             print(f"Cannot load: {filename} for {e}. Decoding from beginning.")
-
-        if self.args.filter_prev_iter:
-            filename = self.args.prev_iter_file
-            print(f"Loading {filename} ...")
-            try:
-                with open(filename, 'rb') as f:
-                    results = pickle.load(f)
-                    # Convert old results to new format
-                    for idx, res in enumerate(results):
-                        self.results_prev_iter[idx] = res
-                n_prev_correct = sum(1 for res in self.results_prev_iter if res['is_correct'])
-                print(f"N of correct questions from previous round if {n_prev_correct}.")
-            except Exception as e:
-                print(f"Cannot load prev iter file: {filename} for {e}.")
 
 
     def analyize_offline_data(self, inst):
@@ -445,12 +424,6 @@ if __name__ == '__main__':
     parser.add_argument('--fastrollout_weight', type=float, default=0.0, help='Weight for the fast rollout')
     parser.add_argument('--orm_url', type=str, default="http://localhost:8103/generate", help='URL for the orm model')
     parser.add_argument('--orm_type', type=str, default="llama2_70b_lm", help='Type of the orm model')
-    parser.add_argument('--orm_use_sympy', type=str2bool, default=False, help='Whether to include sympy for orm')
-    parser.add_argument(
-        '--orm_preset_code_path',
-        type=str,
-        default='/apdcephfs/share_300000800/user/baolinpeng/exp.tencent_chat/data/math_search/MATH_preset_code.json',
-        help='Path to preset code and code output')
     parser.add_argument('--orm_calibrate_logits',
                         type=str2bool,
                         default=False,
@@ -465,16 +438,6 @@ if __name__ == '__main__':
                         type=str,
                         default="http://localhost:8001/predict",
                         help='URL for the additional value model')
-    parser.add_argument('--consistency_url',
-                        type=str,
-                        default="http://30.159.161.95:8322/v1",
-                        help='URL for the consistency model')
-    parser.add_argument(
-        '--consistency_model',
-        type=str,
-        default=
-        "/apdcephfs/share_300000800/user/baolinpeng/local_exp/codes/lit-gpt-2/outputs/jp_consistency_v2_llama13b_v2_finetuned_epoch3",
-        help='Path for the consistency model')
     parser.add_argument('--greedy_path', type=str2bool, default=False, help='Whether to use the greedy path')
     parser.add_argument('--use_calculator', type=str2bool, default=False, help='Whether to use the calculator')
     parser.add_argument('--use_math_extractor', type=str2bool, default=False, help='Whether to use the math extractor')
@@ -490,14 +453,6 @@ if __name__ == '__main__':
                         type=float,
                         default=0.0,
                         help='Stop expansion if the rollout variance is less than this value')
-    parser.add_argument('--use_consistency_as_orm',
-                        type=str2bool,
-                        default=False,
-                        help='Whether to use the consistency as orm')
-    parser.add_argument('--use_match_as_orm',
-                        type=str2bool,
-                        default=False,
-                        help='Whether to use answer matching as orm')
     parser.add_argument('--exec_code', type=str2bool, default=False, help='Whether to execute the code')
     parser.add_argument('--exp_name', type=str, default="mcts", help='Experiment name')
     parser.add_argument('--output-dir', type=str, default="data/trees", help='Output path')
@@ -510,18 +465,8 @@ if __name__ == '__main__':
                         type=int,
                         default=1,
                         help='Number of processes to run the experiment in parallel')
-    parser.add_argument('--high_value_rollout',
-                        type=str2bool,
-                        default=False,
-                        help='Rollout to terminal if norm_value score >= 0.9')
-    parser.add_argument('--low_value_prune',
-                        type=str2bool,
-                        default=False,
-                        help='Prune the node if norm_value score <= 0.1')
     parser.add_argument('--continue_from', type=int, default=-1, help='Run the experiment from')
     parser.add_argument('--continue_until', type=int, default=-1, help='Run the experiment until')
-    parser.add_argument('--filter_prev_iter', type=str2bool, default=False, help='Filter the previous iteration')
-    parser.add_argument('--prev_iter_file', type=str, default='/apdcephfs/share_300000800/user/yaptian/exp.tencent_chat/math-search/prev_iter_files/prev_iter.p',help='Previous iteration file')
     args = parser.parse_args()
     if args.dataset == "metamath":
         args.dataset = "gsm8k"
@@ -574,18 +519,12 @@ if __name__ == '__main__':
         "use_calculator": args.use_calculator,
         "use_math_extractor": args.use_math_extractor,
         "math_extractor_url": args.math_extractor_url,
-        "consistency_url": args.consistency_url,
-        "consistency_model": args.consistency_model,
         "use_rule_based_step_extend": args.use_rule_based_step_extend,
         "stop_expansion_rollout_var": args.stop_expansion_rollout_var,
-        "use_consistency_as_orm": args.use_consistency_as_orm,
-        "use_match_as_orm": args.use_match_as_orm,
         "exec_code": args.exec_code,
         "exp_name": args.exp_name,
         "dataset": args.dataset,
         "output_dir": args.output_dir,
-        "high_value_rollout": args.high_value_rollout,
-        "low_value_prune": args.low_value_prune,
     }
 
     experiment = SearchExperiment(config, args.data_path, args)

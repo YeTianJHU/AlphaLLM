@@ -317,8 +317,6 @@ python3 -u ${SCRIPT_DIR}/search/experiment.py \
   --use_calculator "$USE_CALCULATOR" \
   --use_math_extractor "$USE_MATH_EXTRACTOR" \
   --math_extractor_url "$MATH_EXTRACTOR_URL" \
-  --orm_use_sympy "$ORM_USE_SYMPY" \
-  --orm_preset_code_path "$ORM_PRESET_CODE_PATH" \
   --orm_calibrate_logits "$ORM_CALIBRATE_LOGITS" \
   --consistency_url "$CONSISTENCY_URL" \
   --consistency_model "$CONSISTENCY_MODEL" \
@@ -330,8 +328,6 @@ python3 -u ${SCRIPT_DIR}/search/experiment.py \
   --exp_name ${EXP_NAME} \
   --suffix "$SUFFIX" \
   --n_process ${N_PROCESS} \
-  --filter_prev_iter ${FILTER_PREV_ITER} \
-  --prev_iter_file ${PREV_ITER_FILE} \
   >& ${OUTPUT_DIR}/${LOG_FILE_NAME} &
 
 ln -s ${OUTPUT_DIR}/${LOG_FILE_NAME} logs/${LOG_FILE_NAME}
